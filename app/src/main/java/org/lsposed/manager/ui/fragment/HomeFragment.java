@@ -105,13 +105,18 @@ public class HomeFragment extends BaseFragment implements MenuProvider {
         binding.appBar.setLiftable(true);
         binding.nestedScrollView.getBorderViewDelegate().setBorderVisibilityChangedListener((top, oldTop, bottom, oldBottom) -> binding.appBar.setLifted(!top));
 
-        updateStates(requireActivity(), ConfigManager.isBinderAlive(), UpdateUtil.needUpdate());
+        boolean binderAlive = ConfigManager.isBinderAlive();
+        boolean needUpdate = UpdateUtil.needUpdate();
+        Log.d("LSPosedManager", "onCreateView: binderAlive=" + binderAlive + ", needUpdate=" + needUpdate);
+        updateStates(requireActivity(), binderAlive, needUpdate);
 
         return binding.getRoot();
     }
 
     private void updateStates(Activity activity, boolean binderAlive, boolean needUpdate) {
+        Log.d("LSPosedManager", "updateStates(): binderAlive=" + binderAlive + ", needUpdate=" + needUpdate);
         if (binderAlive) {
+            Log.d("LSPosedManager", "updateStates(): enter binderAlive branch");
             if (needUpdate) {
                 binding.updateTitle.setText(R.string.need_update);
                 binding.updateSummary.setText(getString(R.string.please_update_summary));
@@ -133,6 +138,7 @@ public class HomeFragment extends BaseFragment implements MenuProvider {
             ", flagsLoaded=" + ConfigManager.dex2oatFlagsLoaded());
             var sepolicyAbnormal = !ConfigManager.isSepolicyLoaded();
             var systemServerAbnormal = !ConfigManager.systemServerRequested();
+            Log.d("LSPosedManager", "sepolicyAbnormal=" + sepolicyAbnormal + ", systemServerAbnormal=" + systemServerAbnormal);
             if (sepolicyAbnormal || systemServerAbnormal || dex2oatAbnormal) {
                 binding.statusTitle.setText(R.string.partial_activated);
                 binding.statusIcon.setImageResource(R.drawable.ic_round_warning_24);
@@ -158,6 +164,7 @@ public class HomeFragment extends BaseFragment implements MenuProvider {
                     ConfigManager.getXposedVersionName(), ConfigManager.getXposedVersionCode(), ConfigManager.getApi()));
             binding.developerWarningCard.setVisibility(isDeveloper() ? View.VISIBLE : View.GONE);
         } else {
+            Log.d("LSPosedManager", "updateStates(): enter !binderAlive branch");
             boolean isMagiskInstalled = ConfigManager.isMagiskInstalled();
             if (isMagiskInstalled) {
                 binding.updateTitle.setText(R.string.install);
