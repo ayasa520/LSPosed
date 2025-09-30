@@ -104,20 +104,24 @@ public class Dex2OatService implements Runnable {
                 if (!enforcing) {
                     if (compatibility == DEX2OAT_OK) doMount(false);
                     compatibility = DEX2OAT_SELINUX_PERMISSIVE;
+                    Log.w(TAG, "compatibility => DEX2OAT_SELINUX_PERMISSIVE");
                 } else if (SELinux.checkSELinuxAccess("u:r:untrusted_app:s0",
                         "u:object_r:dex2oat_exec:s0", "file", "execute")
                         || SELinux.checkSELinuxAccess("u:r:untrusted_app:s0",
                         "u:object_r:dex2oat_exec:s0", "file", "execute_no_trans")) {
                     if (compatibility == DEX2OAT_OK) doMount(false);
                     compatibility = DEX2OAT_SEPOLICY_INCORRECT;
+                    Log.w(TAG, "compatibility => DEX2OAT_SEPOLICY_INCORRECT");
                 } else if (compatibility != DEX2OAT_OK) {
                     doMount(true);
                     if (notMounted()) {
                         doMount(false);
                         compatibility = DEX2OAT_MOUNT_FAILED;
+                        Log.e(TAG, "compatibility => DEX2OAT_MOUNT_FAILED");
                         stopWatching();
                     } else {
                         compatibility = DEX2OAT_OK;
+                        Log.i(TAG, "compatibility => DEX2OAT_OK");
                     }
                 }
             }
@@ -151,15 +155,18 @@ public class Dex2OatService implements Runnable {
     }
 
     private void doMount(boolean enabled) {
+        Log.i(TAG, "doMount(" + enabled + ") start");
         doMountNative(enabled, dex2oatArray[0], dex2oatArray[1], dex2oatArray[2], dex2oatArray[3]);
     }
 
     public void start() {
+        Log.i(TAG, "Dex2OatService.start()");
         if (notMounted()) { // Already mounted when restart daemon
             doMount(true);
             if (notMounted()) {
                 doMount(false);
                 compatibility = DEX2OAT_MOUNT_FAILED;
+                Log.e(TAG, "Initial mount failed, set compatibility=DEX2OAT_MOUNT_FAILED");
                 return;
             }
         }
@@ -168,6 +175,7 @@ public class Dex2OatService implements Runnable {
         thread.setName("dex2oat");
         thread.start();
         selinuxObserver.startWatching();
+        Log.d(TAG, "SELinux observer started");
         selinuxObserver.onEvent(0, null);
     }
 

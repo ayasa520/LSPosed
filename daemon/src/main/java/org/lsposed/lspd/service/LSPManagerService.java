@@ -434,7 +434,10 @@ public class LSPManagerService extends ILSPManagerService.Stub {
 
     @Override
     public boolean dex2oatFlagsLoaded() {
-        return SystemProperties.get("dalvik.vm.dex2oat-flags").contains("--inline-max-code-units=0");
+        var val = SystemProperties.get("dalvik.vm.dex2oat-flags");
+        boolean loaded = val.contains("--inline-max-code-units=0");
+        Log.d(TAG, "dex2oatFlagsLoaded(): value='" + val + "' => " + loaded);
+        return loaded;
     }
 
     @Override
@@ -541,7 +544,9 @@ public class LSPManagerService extends ILSPManagerService.Stub {
     @Override
     public int getDex2OatWrapperCompatibility() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            return ServiceManager.getDex2OatService().getCompatibility();
+            int compat = ServiceManager.getDex2OatService().getCompatibility();
+            Log.d(TAG, "getDex2OatWrapperCompatibility() => " + compat);
+            return compat;
         } else {
             return 0;
         }

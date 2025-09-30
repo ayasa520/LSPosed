@@ -301,7 +301,9 @@ public class ConfigManager {
 
     public static boolean dex2oatFlagsLoaded() {
         try {
-            return LSPManagerServiceHolder.getService().dex2oatFlagsLoaded();
+            boolean loaded = LSPManagerServiceHolder.getService().dex2oatFlagsLoaded();
+            Log.d(App.TAG, "dex2oatFlagsLoaded() => " + loaded);
+            return loaded;
         } catch (RemoteException e) {
             return false;
         }
@@ -384,7 +386,9 @@ public class ConfigManager {
 
     public static int getDex2OatWrapperCompatibility() {
         try {
-            return LSPManagerServiceHolder.getService().getDex2OatWrapperCompatibility();
+            int compat = LSPManagerServiceHolder.getService().getDex2OatWrapperCompatibility();
+            Log.d(App.TAG, "getDex2OatWrapperCompatibility() => " + compat);
+            return compat;
         } catch (RemoteException e) {
             Log.e(App.TAG, Log.getStackTraceString(e));
             return ILSPManagerService.DEX2OAT_CRASHED;
