@@ -27,6 +27,7 @@ import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -127,6 +128,9 @@ public class HomeFragment extends BaseFragment implements MenuProvider {
                 binding.updateCard.setVisibility(View.GONE);
             }
             boolean dex2oatAbnormal = ConfigManager.getDex2OatWrapperCompatibility() != ILSPManagerService.DEX2OAT_OK && !ConfigManager.dex2oatFlagsLoaded();
+            Log.d("LSPosedManager", "dex2oatAbnormal=" + dex2oatAbnormal +
+            ", compatibility=" + ConfigManager.getDex2OatWrapperCompatibility() +
+            ", flagsLoaded=" + ConfigManager.dex2oatFlagsLoaded());
             var sepolicyAbnormal = !ConfigManager.isSepolicyLoaded();
             var systemServerAbnormal = !ConfigManager.systemServerRequested();
             if (sepolicyAbnormal || systemServerAbnormal || dex2oatAbnormal) {
